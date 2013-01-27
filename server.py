@@ -6,6 +6,7 @@ import atexit
 conn = sqlite3.connect('server.db')
 
 c = conn.cursor()
+c.execute('''CREATE TABLE IF NOT EXISTS updates (update_time TEXT, id INTEGER PRIMARY KEY, IP text, hostname TEXT)''')
 
 # Set up the server:
 server = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -19,9 +20,12 @@ def shutoff():
 atexit.register(shutoff)
 
 def handleConn(channel, details):
-    print "Connect from " + str(details[0])
+    #print "Connect from " + str(details[0])
     conData = pickle.loads(channel.recv(1024))
-    print conData
+    t = (conData[0], conData[1])
+    print t
+    c.execute("INSERT INTO updates (update_time, IP, hostname) VALUES (datetime(), ?, ?);",t)
+    conn.commit()
     channel.close()
 
 while 1:
