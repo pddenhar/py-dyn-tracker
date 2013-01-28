@@ -9,9 +9,11 @@ config.readfp(open("client.conf"))
 
 server = config.get('client','server')
 update_frequency = int(config.get('client','update_frequency'))
-hostname = os.uname()[1] 
+hostname = ""
 if(config.has_option('client',"hostname")):
     hostname = config.get('client','hostname')
+else:
+    hostname = socket.gethostname() 
 
 def sendIP():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
